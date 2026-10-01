@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somah Édu | Elite Admissions Architecture & Strategy</title>
+    
+    <!-- Google Fonts: Cormorant Garamond (Serif) & Plus Jakarta Sans (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & Babel CDN for single-file interactivity -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Tailwind Configuration & Styling -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0B0B0B',
+                        charcoal: '#121212',
+                        cardDark: '#171717',
+                        ecru: '#FBF9F5',
+                        ecruMuted: '#E5E2DC',
+                        gold: {
+                            DEFAULT: '#C5A059',
+                            light: '#E5C378',
+                            dark: '#8C733E',
+                            glow: 'rgba(197, 160, 89, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        superwide: '0.3em',
+                        ultra: '0.4em'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar for boutique luxury feel */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0B0B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #262626;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C5A059;
+        }
+        
+        .gold-border-glow {
+            box-shadow: 0 0 25px -5px rgba(197, 160, 89, 0.12);
+        }
+        
+        .gold-text-gradient {
+            background: linear-gradient(135deg, #FBF9F5 0%, #E5C378 50%, #C5A059 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-text-pure {
+            background: linear-gradient(135deg, #E5C378 0%, #C5A059 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+
+        .thin-line-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-obsidian text-ecru font-sans antialiased selection:bg-gold selection:text-obsidian overflow-x-hidden">
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // Comprehensive Database of Top 50 Global Universities
+        const GLOBAL_UNIVERSITIES = [
+            {
+                id: 'harvard',
+                name: 'Harvard University',
+                location: 'Cambridge, MA, USA',
+                tier: 'US Ivy League & M7',
+                track: 'Undergraduate / Postgraduate',
+                acceptanceRate: '3.4%',
+                minGPA: '3.90+',
+                portfolioWeight: 'Intellectual Leadership & Original Impact',
+                matchTags: ['Founder', 'Research', 'Leadership'],
+                strategySnippet: 'Focus heavily on non-academic holistic leadership proof and distinct personal philosophy narrative.'
+            },
+            {
+                id: 'stanford',
+                name: 'Stanford University',
+                location: 'Stanford, CA, USA',
+                tier: 'US Ivy League & M7',
+                track: 'Undergraduate / MBA',
+                acceptanceRate: '3.9%',
+                minGPA: '3.88+',
+                portfolioWeight: 'Venture Innovation & Intellectual Vitality',
+                matchTags: ['Founder', 'Corporate Leadership', 'Research'],
+                strategySnippet: 'Emphasize your core intrinsic motivations and unique contribution to Silicon Valley ecosystem.'
+            },
+            {
+                id: 'oxford',
+                name: 'University of Oxford',
+                location: 'Oxford, United Kingdom',
+                tier: 'Oxbridge & UK Russell Group',
+                track: 'Undergraduate / Postgraduate',
+                acceptanceRate: '14.2%',
+                minGPA: '3.85+',
+                portfolioWeight: 'Academic Rigor & Specialized Tutorial Aptitude',
+                matchTags: ['Research', 'Academic Distinction'],
+                strategySnippet: 'Prepare for intensive technical interview panels and demonstrate laser-focused academic passion.'
+            },
+            {
+                id: 'cambridge',
+                name: 'University of Cambridge',
+                location: 'Cambridge, United Kingdom',
+                tier: 'Oxbridge & UK Russell Group',
+                track: 'Undergraduate / Doctorate',
+                acceptanceRate: '15.8%',
+                minGPA: '3.85+',
+                portfolioWeight: 'Pure Analytical Excellence & Original Inquiry',
+                matchTags: ['Research', 'Olympic/National'],
+                strategySnippet: 'Prioritize deep domain problem-solving abilities and specialized publication portfolios.'
+            },
+            {
+                id: 'insead',
+                name: 'INSEAD',
+                location: 'Fontainebleau, France / Singapore',
+                tier: 'Top European B-Schools',
+                track: 'MBA',
+                acceptanceRate: '28.0%',
+                minGPA: '3.60+ (GMAT 720+)',
+                portfolioWeight: 'Cross-Border Leadership & Cultural Agility',
+                matchTags: ['Corporate Leadership', 'Founder'],
+                strategySnippet: 'Highlight multi-language competence and rapid international adaptability in management.'
+            },
+            {
+                id: 'mit',
+                name: 'Massachusetts Institute of Technology (MIT)',
+                location: 'Cambridge, MA, USA',
+                tier: 'US Ivy League & M7',
+                track: 'Undergraduate / Postgraduate',
+                acceptanceRate: '3.9%',
+                minGPA: '3.95+',
+                portfolioWeight: 'Quantitative Mastery & Creative Problem Solving',
+                matchTags: ['Research', 'Founder'],
+                strategySnippet: 'Showcase real-world technical implementation and collaborative scientific leadership.'
+            },
+            {
+                id: 'columbia',
+                name: 'Columbia University',
+                location: 'New York City, NY, USA',
+                tier: 'US Ivy League & M7',
+                track: 'Undergraduate / MBA',
+                acceptanceRate: '3.8%',
+                minGPA: '3.85+',
+                portfolioWeight: 'Global Urban Perspective & Intellectual Breadth',
+                matchTags: ['Social Impact', 'Corporate Leadership'],
+                strategySnippet: 'Align application deeply with New York’s global commerce and intellectual core curriculum.'
+            },
+            {
+                id: 'imperial',
+                name: 'Imperial College London',
+                location: 'London, United Kingdom',
+                tier: 'Oxbridge & UK Russell Group',
+                track: 'Undergraduate / Masters',
+                acceptanceRate: '18.0%',
+                minGPA: '3.75+',
+                portfolioWeight: 'STEM Innovation & Commercial Enterprise',
+                matchTags: ['Research', 'Founder'],
+                strategySnippet: 'Focus on applied scientific developments and prospective industry applications.'
+            },
+            {
+                id: 'nus',
+                name: 'National University of Singapore (NUS)',
+                location: 'Singapore',
+                tier: 'Asia-Pacific Elite',
+                track: 'Undergraduate / Masters / Ph.D.',
+                acceptanceRate: '12.0%',
+                minGPA: '3.80+',
+                portfolioWeight: 'Asian Market Leadership & Technological Rigor',
+                matchTags: ['Research', 'Corporate Leadership'],
+                strategySnippet: 'Demonstrate strategic positioning for Asian-centric global growth vectors.'
+            }
+        ];
+
+        // Senior Partners and Private Counselors
+        const COUNSELORS = [
+            {
+                id: 'evance',
+                name: 'Dr. Evelyn Vance',
+                title: 'Senior Managing Partner & Chief Admissions Architect',
+                pedigree: 'Former Deputy Director of Admissions, Harvard University',
+                education: 'Ph.D. Higher Education Policy (Harvard) | B.A. Ethics (Yale)',
+                specialization: 'Ivy League Strategic Positioning & Institutional Narrative Design',
+                placedCount: '420+ Ivy League Admissions',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600',
+                bio: 'With over 18 years inside elite Ivy League committee rooms, Dr. Vance orchestrates candidacies that transcend standard metrics into compelling institutional assets.'
+            },
+            {
+                id: 'jsterling',
+                name: 'Julian Sterling',
+                title: 'Director of European & Oxbridge Strategy',
+                pedigree: 'Former Senior Admissions Reader, Trinity College, Cambridge',
+                education: 'M.Phil Classical Tripos (Cambridge) | M.A. Politics (Oxford)',
+                specialization: 'Oxbridge Academic Interview Prep & Specialized Research Dossiers',
+                placedCount: '310+ Oxbridge Matriculations',
+                image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600',
+                bio: 'Julian specializes in extracting pure academic vitality, transforming candidate intellect into the exact archetype demanded by Oxbridge tutorial systems.'
+            },
+            {
+                id: 'asomah',
+                name: 'Aarav Somah',
+                title: 'Founder & Principal Global Advisor',
+                pedigree: 'EduAbroad Founder | M7 MBA Strategy Advisor',
+                education: 'MBA (Wharton School) | B.Tech Computer Science (IIT Delhi)',
+                specialization: 'High-Net-Worth Strategy, M7 Business Schools & Entrepreneur Portfolio',
+                placedCount: '500+ Global Top 20 Placements',
+                image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600',
+                bio: 'Aarav leads the Gurugram Private Lounge, personally mentoring business dynasties, founders, and high-achieving scholars across India and South Asia.'
+            }
+        ];
+
+        function App() {
+            // Assessment Modal State
+            const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
+            const [assessmentStep, setAssessmentStep] = useState(1);
+            const [generatedDossierId, setGeneratedDossierId] = useState('');
+            
+            // Form Data
+            const [formData, setFormData] = useState({
+                candidateName: '',
+                email: '',
+                phone: '',
+                targetTrack: 'Undergraduate',
+                targetRegion: 'US Ivy League & M7',
+                currentStanding: '',
+                distinctions: '',
+                consultationMode: 'Gurugram Private Lounge',
+                preferredDate: '',
+                referralCode: 'SOMAH-VIP-2027'
+            });
+
+            // Matcher State
+            const [matcherTrack, setMatcherTrack] = useState('Undergraduate / Postgraduate');
+            const [matcherRegion, setMatcherRegion] = useState('US Ivy League & M7');
+            const [matcherDistinction, setMatcherDistinction] = useState('Top 1% (3.9+ GPA / 760+ GMAT)');
+            const [matcherHighlight, setMatcherHighlight] = useState('Founder');
+
+            // Faculty Modal State
+            const [selectedFaculty, setSelectedFaculty] = useState(null);
+            
+            // Client Portal Modal State
+            const [isPortalOpen, setIsPortalOpen] = useState(false);
+            const [portalPasscode, setPortalPasscode] = useState('');
+            const [portalError, setPortalError] = useState(false);
+
+            // Toast Notification
+            const [toast, setToast] = useState('');
+
+            const showToast = (msg) => {
+                setToast(msg);
+                setTimeout(() => setToast(''), 3500);
+            };
+
+            // Dynamic Matching Algorithm
+            const filteredMatches = useMemo(() => {
+                return GLOBAL_UNIVERSITIES.filter(u => {
+                    const matchRegion = matcherRegion === 'All Regions' || u.tier === matcherRegion;
+                    return matchRegion;
+                });
+            }, [matcherRegion, matcherTrack, matcherHighlight]);
+
+            // Open Assessment Modal and Pre-fill Target
+            const triggerAssessmentWithTarget = (universityName) => {
+                setFormData(prev => ({
+                    ...prev,
+                    distinctions: `Primary Interest Target: ${universityName}`
+                }));
+                setIsAssessmentOpen(true);
+            };
+
+            // Generate Unique Dossier ID
+            const handleAssessmentSubmit = (e) => {
+                e.preventDefault();
+                if (assessmentStep < 4) {
+                    if (assessmentStep === 3) {
+                        const randomId = 'SOMAH-' + Math.floor(100000 + Math.random() * 900000);
+                        setGeneratedDossierId(randomId);
+                    }
+                    setAssessmentStep(prev => prev + 1);
+                } else {
+                    // Close and reset
+                    setIsAssessmentOpen(false);
+                    setAssessmentStep(1);
+                    showToast(`Private Dossier ${generatedDossierId} submitted. Confidential Liaison assigned.`);
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-obsidian text-ecru font-sans relative overflow-x-hidden thin-line-grid">
+                    
+                    {/* Toast Notification */}
+                    {toast && (
+                        <div className="fixed bottom-6 right-6 z-50 bg-charcoal border border-gold/40 text-ecru px-6 py-4 rounded-none shadow-2xl flex items-center space-x-3 transition-all duration-300">
+                            <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                            <span className="text-xs uppercase tracking-widest text-gold font-medium">{toast}</span>
+                        </div>
+                    )}
+
+                    {/* Header Bar */}
+                    <header className="fixed top-0 left-0 right-0 z-40 bg-obsidian/90 backdrop-blur-md border-b border-gold/10">
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                            
+                            {/* Logo / Monogram */}
+                            <a href="#" className="flex items-center space-x-3 group">
+                                <div className="w-9 h-9 border border-gold/40 flex items-center justify-center bg-charcoal group-hover:border-gold transition-colors duration-300">
+                                    <span className="font-serif italic text-gold text-lg tracking-tighter">SÉ</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-serif text-lg tracking-ultra uppercase text-ecru font-light">SOMAH ÉDU</span>
+                                    <span className="text-[9px] uppercase tracking-superwide text-gold/70 -mt-1">Private Architecture</span>
+                                </div>
+                            </a>
+
+                            {/* Nav Links */}
+                            <nav className="hidden md:flex items-center space-x-10 text-xs tracking-widest uppercase font-light text-ecruMuted">
+                                <a href="#philosophy" className="hover:text-gold transition-colors">Philosophy</a>
+                                <a href="#matcher" className="hover:text-gold transition-colors">Diagnostic Suite</a>
+                                <a href="#faculty" className="hover:text-gold transition-colors">Senior Faculty</a>
+                                <a href="#assessment" className="hover:text-gold transition-colors">Vetting Protocol</a>
+                            </nav>
+
+                            {/* CTA Action */}
+                            <div className="flex items-center space-x-4">
+                                <button 
+                                    onClick={() => setIsPortalOpen(true)}
+                                    className="hidden lg:block text-[11px] uppercase tracking-widest text-gold/80 hover:text-gold px-3 py-2 border border-transparent hover:border-gold/20 transition-all">
+                                    Client Portal
+                                </button>
+                                <button 
+                                    onClick={() => { setAssessmentStep(1); setIsAssessmentOpen(true); }}
+                                    className="px-5 py-2.5 bg-transparent border border-gold/40 text-gold hover:bg-gold hover:text-obsidian text-xs uppercase tracking-widest transition-all duration-300">
+                                    Request Assessment
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Hero Section */}
+                    <section className="relative pt-36 pb-24 md:pt-48 md:pb-36 px-6 max-w-7xl mx-auto border-b border-gold/10">
+                        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="max-w-4xl">
+                            {/* Badges */}
+                            <div className="inline-flex items-center space-x-3 px-3 py-1.5 border border-gold/20 bg-charcoal/50 mb-8">
+                                <span className="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                                <span className="text-[10px] uppercase tracking-superwide text-gold">EduAbroad Elite Consultants · Gurugram & Global</span>
+                            </div>
+
+                            {/* Main Editorial Title */}
+                            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-ecru leading-[1.05] mb-8">
+                                Architecture of <br />
+                                <span className="italic font-light gold-text-gradient">Global Ambition.</span>
+                            </h1>
+
+                            <p className="text-base sm:text-lg text-ecruMuted font-light leading-relaxed max-w-2xl mb-12 tracking-wide">
+                                Bespoke admissions strategic architecture for the world’s top 50 institutions. Limited strictly to thirty private candidacies per academic cycle from our Gurugram lounge and virtual suite.
+                            </p>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                                <button 
+                                    onClick={() => { setAssessmentStep(1); setIsAssessmentOpen(true); }}
+                                    className="px-8 py-4 bg-gold text-obsidian text-xs uppercase tracking-ultra font-semibold hover:bg-gold-light transition-all shadow-lg text-center">
+                                    Apply for Invitation
+                                </button>
+                                <a 
+                                    href="#matcher"
+                                    className="px-8 py-4 border border-gold/30 text-ecru hover:border-gold hover:text-gold text-xs uppercase tracking-ultra font-light transition-all text-center">
+                                    Launch Diagnostic Suite
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Distinction Stat Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 pt-12 border-t border-gold/10">
+                            <div>
+                                <div className="font-serif text-3xl md:text-4xl text-gold font-light">98.4%</div>
+                                <div className="text-[10px] uppercase tracking-widest text-ecruMuted mt-1">Ivy League & Oxbridge Rate</div>
+                            </div>
+                            <div>
+                                <div className="font-serif text-3xl md:text-4xl text-gold font-light">$14.2M+</div>
+                                <div className="text-[10px] uppercase tracking-widest text-ecruMuted mt-1">Merit Fellowships Secured</div>
+                            </div>
+                            <div>
+                                <div className="font-serif text-3xl md:text-4xl text-gold font-light">1 : 4</div>
+                                <div className="text-[10px] uppercase tracking-widest text-ecruMuted mt-1">Candidate-to-Faculty Ratio</div>
+                            </div>
+                            <div>
+                                <div className="font-serif text-3xl md:text-4xl text-gold font-light">100%</div>
+                                <div className="text-[10px] uppercase tracking-widest text-ecruMuted mt-1">Confidential Guarantee</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Philosophy Section */}
+                    <section id="philosophy" className="py-24 px-6 max-w-7xl mx-auto border-b border-gold/10">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                            <div>
+                                <span className="text-[10px] uppercase tracking-ultra text-gold block mb-3">The Somah Imperative</span>
+                                <h2 className="font-serif text-3xl md:text-5xl font-light text-ecru">Refined Strategy vs standard Consulting</h2>
+                            </div>
+                            <p className="text-xs text-ecruMuted max-w-md mt-4 md:mt-0 font-light tracking-wide leading-relaxed">
+                                We do not process applications. We construct undeniable institutional positions through former Ivy League and Oxbridge decision-makers.
+                            </p>
+                        </div>
+
+                        {/* 3 Pillars Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="p-8 bg-charcoal/40 border border-gold/10 hover:border-gold/30 transition-all duration-300 group">
+                                <div className="text-gold font-serif text-2xl mb-4 group-hover:translate-x-1 transition-transform">01 / Architectural Narrative</div>
+                                <h3 className="font-serif text-xl text-ecru mb-3 font-normal">Non-Replicable Candidate Positioning</h3>
+                                <p className="text-xs text-ecruMuted font-light leading-relaxed">
+                                    Standard essays focus on accomplishments. Our committee converts your life work into an indispensable institutional thesis tailored to admissions committee priorities.
+                                </p>
+                            </div>
+
+                            <div className="p-8 bg-charcoal/40 border border-gold/10 hover:border-gold/30 transition-all duration-300 group">
+                                <div className="text-gold font-serif text-2xl mb-4 group-hover:translate-x-1 transition-transform">02 / Confidential Access</div>
+                                <h3 className="font-serif text-xl text-ecru mb-3 font-normal">Gurugram Lounge & Virtual Vault</h3>
+                                <p className="text-xs text-ecruMuted font-light leading-relaxed">
+                                    Private assessment takes place inside our DLF Cyber City executive suite or fully encrypted virtual rooms, protecting family privacy and elite institutional reputational interests.
+                                </p>
+                            </div>
+
+                            <div className="p-8 bg-charcoal/40 border border-gold/10 hover:border-gold/30 transition-all duration-300 group">
+                                <div className="text-gold font-serif text-2xl mb-4 group-hover:translate-x-1 transition-transform">03 / Exclusivity Guarantee</div>
+                                <h3 className="font-serif text-xl text-ecru mb-3 font-normal">Strict 30-Candidate Cap</h3>
+                                <p className="text-xs text-ecruMuted font-light leading-relaxed">
+                                    To maintain zero conflict of interest and uncompromised senior partner focus, we restrict our full-tier architecture to 30 candidates globally per academic year.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Interactive Global University Profile Matcher */}
+                    <section id="matcher" className="py-24 px-6 max-w-7xl mx-auto border-b border-gold/10">
+                        <div className="text-center max-w-3xl mx-auto mb-16">
+                            <span className="text-[10px] uppercase tracking-ultra text-gold block mb-3">Diagnostic Intelligence</span>
+                            <h2 className="font-serif text-3xl md:text-5xl font-light text-ecru mb-4">Global University Profile Matcher</h2>
+                            <p className="text-xs text-ecruMuted font-light tracking-wide">
+                                Input your trajectory vectors below to receive real-time match calculations based on historical admissions data across the world’s Top 50 institutions.
+                            </p>
+                        </div>
+
+                        {/* Matcher Filter Panel */}
+                        <div className="glass-panel p-6 md:p-10 mb-12 border border-gold/20">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                
+                                {/* Target Academic Track */}
+                                <div>
+                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-2 font-medium">Academic Track</label>
+                                    <select 
+                                        value={matcherTrack}
+                                        onChange={(e) => setMatcherTrack(e.target.value)}
+                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold">
+                                        <option value="Undergraduate / Postgraduate">Undergraduate (B.A. / B.S.)</option>
+                                        <option value="Postgraduate / Doctorate">Postgraduate (M.S. / M.A.)</option>
+                                        <option value="MBA">MBA / Executive Business</option>
+                                        <option value="Research Doctorate">Doctorate (Ph.D.)</option>
+                                    </select>
+                                </div>
+
+                                {/* Primary Region */}
+                                <div>
+                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-2 font-medium">Target Region</label>
+                                    <select 
+                                        value={matcherRegion}
+                                        onChange={(e) => setMatcherRegion(e.target.value)}
+                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold">
+                                        <option value="US Ivy League & M7">US Ivy League & M7 Elite</option>
+                                        <option value="Oxbridge & UK Russell Group">Oxbridge & UK Russell Group</option>
+                                        <option value="Top European B-Schools">Top European B-Schools</option>
+                                        <option value="Asia-Pacific Elite">Asia-Pacific Elite</option>
+                                    </select>
+                                </div>
+
+                                {/* Academic Distinction Level */}
+                                <div>
+                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-2 font-medium">Academic Distinction</label>
+                                    <select 
+                                        value={matcherDistinction}
+                                        onChange={(e) => setMatcherDistinction(e.target.value)}
+                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold">
+                                        <option value="Top 1% (3.9+ GPA / 760+ GMAT)">Top 1% (3.9+ GPA / 760+ GMAT)</option>
+                                        <option value="Top 5% (3.7+ GPA / 720+ GMAT)">Top 5% (3.7+ GPA / 720+ GMAT)</option>
+                                        <option value="Top 10% (3.5+ GPA / 680+ GMAT)">Top 10% (3.5+ GPA / 680+ GMAT)</option>
+                                    </select>
+                                </div>
+
+                                {/* Portfolio Highlight */}
+                                <div>
+                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-2 font-medium">Portfolio Highlight</label>
+                                    <select 
+                                        value={matcherHighlight}
+                                        onChange={(e) => setMatcherHighlight(e.target.value)}
+                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold">
+                                        <option value="Founder">Founder / Venture Creator</option>
+                                        <option value="Research">Published Research Author</option>
+                                        <option value="Corporate Leadership">Corporate Executive Path</option>
+                                        <option value="Social Impact">National Social Impact</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Calculated Results Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredMatches.map((uni) => (
+                                <div key={uni.id} className="bg-charcoal/60 border border-gold/15 p-6 hover:border-gold/40 transition-all flex flex-col justify-between group">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="text-[9px] uppercase tracking-superwide text-gold border border-gold/20 px-2 py-0.5">
+                                                {uni.tier}
+                                            </span>
+                                            <span className="text-[10px] text-ecruMuted">
+                                                Acceptance: <span className="text-gold">{uni.acceptanceRate}</span>
+                                            </span>
+                                        </div>
+
+                                        <h3 className="font-serif text-2xl text-ecru mb-1 group-hover:text-gold transition-colors">{uni.name}</h3>
+                                        <p className="text-[11px] text-ecruMuted/70 mb-4">{uni.location}</p>
+
+                                        <div className="space-y-2 mb-6 border-t border-b border-gold/10 py-3 text-xs">
+                                            <div className="flex justify-between">
+                                                <span className="text-ecruMuted">Academic Baseline:</span>
+                                                <span className="text-ecru font-medium">{uni.minGPA}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-ecruMuted">Portfolio Weight:</span>
+                                                <span className="text-gold text-right text-[11px] max-w-[160px] truncate">{uni.portfolioWeight}</span>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-[11px] text-ecruMuted font-light leading-relaxed italic mb-6">
+                                            "{uni.strategySnippet}"
+                                        </p>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => triggerAssessmentWithTarget(uni.name)}
+                                        className="w-full py-3 border border-gold/30 text-gold hover:bg-gold hover:text-obsidian text-[10px] uppercase tracking-ultra transition-all text-center">
+                                        Align Strategy for {uni.name.split(' ')[0]}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Senior Faculty Profiles */}
+                    <section id="faculty" className="py-24 px-6 max-w-7xl mx-auto border-b border-gold/10">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                            <div>
+                                <span className="text-[10px] uppercase tracking-ultra text-gold block mb-3">Private Advisory Council</span>
+                                <h2 className="font-serif text-3xl md:text-5xl font-light text-ecru">Former Admissions Committee Directors</h2>
+                            </div>
+                            <p className="text-xs text-ecruMuted max-w-md mt-4 md:mt-0 font-light tracking-wide">
+                                Direct, unmediated access to elite scholars and former admissions decision-makers.
+                            </p>
+                        </div>
+
+                        {/* Faculty Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {COUNSELORS.map((faculty) => (
+                                <div key={faculty.id} className="bg-charcoal/40 border border-gold/15 p-6 hover:border-gold/40 transition-all group flex flex-col justify-between">
+                                    <div>
+                                        <div className="relative overflow-hidden mb-6 h-64 border border-gold/20">
+                                            <img 
+                                                src={faculty.image} 
+                                                alt={faculty.name} 
+                                                className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent"></div>
+                                            <div className="absolute bottom-3 left-3 bg-obsidian/80 px-2 py-1 text-[9px] uppercase tracking-widest text-gold border border-gold/20">
+                                                {faculty.placedCount}
+                                            </div>
+                                        </div>
+
+                                        <h3 className="font-serif text-2xl text-ecru mb-1">{faculty.name}</h3>
+                                        <p className="text-xs text-gold font-light mb-2">{faculty.title}</p>
+                                        <p className="text-[11px] text-ecruMuted/80 font-light mb-4">{faculty.pedigree}</p>
+
+                                        <div className="text-[11px] text-ecruMuted border-t border-gold/10 pt-3 mb-6 space-y-1">
+                                            <div><span className="text-gold/70">Education:</span> {faculty.education}</div>
+                                            <div><span className="text-gold/70">Focus:</span> {faculty.specialization}</div>
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => setSelectedFaculty(faculty)}
+                                        className="w-full py-2.5 border border-gold/30 text-gold hover:bg-gold hover:text-obsidian text-[10px] uppercase tracking-widest transition-all">
+                                        View Full Dossier
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* "By Invitation / Private Assessment Only" Multi-Step Modal */}
+                    {isAssessmentOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/90 backdrop-blur-md">
+                            <div className="relative w-full max-w-2xl bg-charcoal border border-gold/40 p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[90vh]">
+                                
+                                {/* Close Modal Button */}
+                                <button 
+                                    onClick={() => setIsAssessmentOpen(false)}
+                                    className="absolute top-6 right-6 text-gold/60 hover:text-gold text-xs uppercase tracking-widest">
+                                    [ Close ]
+                                </button>
+
+                                {/* Modal Header */}
+                                <div className="mb-8">
+                                    <span className="text-[9px] uppercase tracking-ultra text-gold block mb-1">Confidential Admission Vetting Protocol</span>
+                                    <h3 className="font-serif text-2xl md:text-3xl text-ecru font-light">
+                                        {assessmentStep === 1 && "Step 1: Candidate Identity & Target"}
+                                        {assessmentStep === 2 && "Step 2: Academic Standing & Distinction"}
+                                        {assessmentStep === 3 && "Step 3: Consultation Format & Schedule"}
+                                        {assessmentStep === 4 && "Step 4: Private Dossier Issue"}
+                                    </h3>
+                                    
+                                    {/* Progress Step Indicator */}
+                                    <div className="flex space-x-2 mt-4">
+                                        {[1, 2, 3, 4].map(step => (
+                                            <div 
+                                                key={step} 
+                                                className={`h-1 flex-1 transition-all ${step <= assessmentStep ? 'bg-gold' : 'bg-gold/20'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Form Content */}
+                                <form onSubmit={handleAssessmentSubmit}>
+                                    
+                                    {/* Step 1 */}
+                                    {assessmentStep === 1 && (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Full Name of Candidate</label>
+                                                <input 
+                                                    type="text" 
+                                                    required
+                                                    value={formData.candidateName}
+                                                    onChange={e => setFormData({...formData, candidateName: e.target.value})}
+                                                    placeholder="e.g., Lord / Lady / Regent Name"
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Confidential Email</label>
+                                                    <input 
+                                                        type="email" 
+                                                        required
+                                                        value={formData.email}
+                                                        onChange={e => setFormData({...formData, email: e.target.value})}
+                                                        placeholder="candidate@domain.com"
+                                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Direct Contact Number</label>
+                                                    <input 
+                                                        type="tel" 
+                                                        required
+                                                        value={formData.phone}
+                                                        onChange={e => setFormData({...formData, phone: e.target.value})}
+                                                        placeholder="+91 98765 43210"
+                                                        className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Target Intake Academic Year</label>
+                                                <select 
+                                                    value={formData.targetTrack}
+                                                    onChange={e => setFormData({...formData, targetTrack: e.target.value})}
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold">
+                                                    <option value="Undergraduate 2027">Undergraduate 2027 Intake</option>
+                                                    <option value="Postgraduate 2027">Postgraduate / Masters 2027 Intake</option>
+                                                    <option value="MBA 2027">M7 MBA 2027 Intake</option>
+                                                    <option value="Doctorate 2027">Doctorate / Ph.D. Intake</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Step 2 */}
+                                    {assessmentStep === 2 && (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Current Institution or Company</label>
+                                                <input 
+                                                    type="text" 
+                                                    required
+                                                    value={formData.currentStanding}
+                                                    onChange={e => setFormData({...formData, currentStanding: e.target.value})}
+                                                    placeholder="e.g., The Doon School / IIT Delhi / McKinsey & Co."
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Key Distinction or Portfolio Highlight</label>
+                                                <textarea 
+                                                    rows="3"
+                                                    value={formData.distinctions}
+                                                    onChange={e => setFormData({...formData, distinctions: e.target.value})}
+                                                    placeholder="Detail GPA standing, published papers, founder history, or athletic representation..."
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Step 3 */}
+                                    {assessmentStep === 3 && (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-2">Consultation Format</label>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <label className={`p-4 border cursor-pointer text-xs transition-all ${formData.consultationMode === 'Gurugram Private Lounge' ? 'border-gold bg-gold/10' : 'border-gold/20 bg-obsidian'}`}>
+                                                        <input 
+                                                            type="radio" 
+                                                            name="consultMode" 
+                                                            checked={formData.consultationMode === 'Gurugram Private Lounge'}
+                                                            onChange={() => setFormData({...formData, consultationMode: 'Gurugram Private Lounge'})}
+                                                            className="hidden"
+                                                        />
+                                                        <div className="font-serif text-sm text-gold mb-1">Gurugram Lounge</div>
+                                                        <div className="text-[10px] text-ecruMuted">DLF Cyber City, Phase III, Gurugram</div>
+                                                    </label>
+
+                                                    <label className={`p-4 border cursor-pointer text-xs transition-all ${formData.consultationMode === 'Encrypted Virtual Suite' ? 'border-gold bg-gold/10' : 'border-gold/20 bg-obsidian'}`}>
+                                                        <input 
+                                                            type="radio" 
+                                                            name="consultMode" 
+                                                            checked={formData.consultationMode === 'Encrypted Virtual Suite'}
+                                                            onChange={() => setFormData({...formData, consultationMode: 'Encrypted Virtual Suite'})}
+                                                            className="hidden"
+                                                        />
+                                                        <div className="font-serif text-sm text-gold mb-1">Virtual Vault</div>
+                                                        <div className="text-[10px] text-ecruMuted">Encrypted 256-bit Video Conference</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Preferred Consultation Date</label>
+                                                <input 
+                                                    type="date" 
+                                                    required
+                                                    value={formData.preferredDate}
+                                                    onChange={e => setFormData({...formData, preferredDate: e.target.value})}
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-widest text-gold block mb-1">Access Code / Family Referral Token</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={formData.referralCode}
+                                                    onChange={e => setFormData({...formData, referralCode: e.target.value})}
+                                                    className="w-full bg-obsidian border border-gold/20 text-ecru text-xs p-3 focus:outline-none focus:border-gold"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Step 4 Confirmation */}
+                                    {assessmentStep === 4 && (
+                                        <div className="text-center py-6 space-y-4">
+                                            <div className="w-16 h-16 border border-gold text-gold flex items-center justify-center mx-auto text-xl font-serif">
+                                                ✓
+                                            </div>
+                                            <h4 className="font-serif text-2xl text-gold">Dossier Generated</h4>
+                                            <div className="p-4 bg-obsidian border border-gold/30 text-center">
+                                                <div className="text-[9px] uppercase tracking-superwide text-ecruMuted">Unique Assessment Dossier ID</div>
+                                                <div className="font-serif text-2xl text-gold tracking-widest mt-1">{generatedDossierId}</div>
+                                            </div>
+                                            <p className="text-xs text-ecruMuted font-light leading-relaxed">
+                                                Your confidential profile for <span className="text-gold">{formData.candidateName}</span> has been dispatched to Senior Managing Partner Dr. Evelyn Vance. A private liaison will contact you within 12 hours.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Buttons Footer */}
+                                    <div className="mt-8 pt-6 border-t border-gold/10 flex justify-between">
+                                        {assessmentStep > 1 && assessmentStep < 4 && (
+                                            <button 
+                                                type="button"
+                                                onClick={() => setAssessmentStep(prev => prev - 1)}
+                                                className="px-6 py-2.5 border border-gold/20 text-ecruMuted text-xs uppercase tracking-widest">
+                                                Back
+                                            </button>
+                                        )}
+                                        <button 
+                                            type="submit"
+                                            className="ml-auto px-8 py-3 bg-gold text-obsidian text-xs uppercase tracking-ultra font-semibold hover:bg-gold-light transition-all">
+                                            {assessmentStep === 3 ? "Generate Dossier" : assessmentStep === 4 ? "Complete & Close" : "Continue Protocol"}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Faculty Dossier Modal */}
+                    {selectedFaculty && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/90 backdrop-blur-md">
+                            <div className="relative w-full max-w-xl bg-charcoal border border-gold/40 p-8 shadow-2xl">
+                                <button 
+                                    onClick={() => setSelectedFaculty(null)}
+                                    className="absolute top-6 right-6 text-gold/60 hover:text-gold text-xs uppercase tracking-widest">
+                                    [ Close ]
+                                </button>
+
+                                <div className="flex items-center space-x-4 mb-6">
+                                    <img src={selectedFaculty.image} className="w-20 h-20 object-cover border border-gold/30" />
+                                    <div>
+                                        <h3 className="font-serif text-2xl text-ecru">{selectedFaculty.name}</h3>
+                                        <p className="text-xs text-gold">{selectedFaculty.title}</p>
+                                        <p className="text-[10px] text-ecruMuted mt-1">{selectedFaculty.pedigree}</p>
+                                    </div>
+                                </div>
+
+                                <p className="text-xs text-ecruMuted font-light leading-relaxed mb-6 italic border-l-2 border-gold/40 pl-4">
+                                    "{selectedFaculty.bio}"
+                                </p>
+
+                                <div className="space-y-3 text-xs border-t border-gold/10 pt-4 mb-6">
+                                    <div><span className="text-gold">Education Credentials:</span> {selectedFaculty.education}</div>
+                                    <div><span className="text-gold">Primary Advisory Focus:</span> {selectedFaculty.specialization}</div>
+                                    <div><span className="text-gold">Proven Track Record:</span> {selectedFaculty.placedCount}</div>
+                                </div>
+
+                                <button 
+                                    onClick={() => {
+                                        setSelectedFaculty(null);
+                                        setAssessmentStep(1);
+                                        setIsAssessmentOpen(true);
+                                    }}
+                                    className="w-full py-3 bg-gold text-obsidian text-xs uppercase tracking-ultra font-semibold">
+                                    Request Direct Consultation with {selectedFaculty.name.split(' ')[1]}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Client Portal Modal */}
+                    {isPortalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/95 backdrop-blur-lg">
+                            <div className="relative w-full max-w-md bg-charcoal border border-gold/30 p-8 text-center">
+                                <button 
+                                    onClick={() => setIsPortalOpen(false)}
+                                    className="absolute top-6 right-6 text-gold/60 hover:text-gold text-xs uppercase tracking-widest">
+                                    [ Exit ]
+                                </button>
+
+                                <div className="w-12 h-12 border border-gold/40 flex items-center justify-center mx-auto mb-4">
+                                    <span className="font-serif italic text-gold text-xl">SÉ</span>
+                                </div>
+
+                                <h3 className="font-serif text-2xl text-ecru mb-2">Private Client Vault</h3>
+                                <p className="text-[10px] uppercase tracking-widest text-gold mb-6">Encrypted Candidate Dossier Portal</p>
+
+                                <div className="space-y-4">
+                                    <input 
+                                        type="password" 
+                                        placeholder="Enter Candidate Vault Key"
+                                        value={portalPasscode}
+                                        onChange={e => setPortalPasscode(e.target.value)}
+                                        className="w-full bg-obsidian border border-gold/20 text-center text-ecru text-xs p-3 focus:outline-none focus:border-gold tracking-widest"
+                                    />
+                                    {portalError && <p className="text-[10px] text-red-400">Invalid Vault Key. Access Restricted.</p>}
+                                    <button 
+                                        onClick={() => {
+                                            if (portalPasscode === "SOMAH2027") {
+                                                setIsPortalOpen(false);
+                                                showToast("Welcome back. Vault Key Accepted.");
+                                            } else {
+                                                setPortalError(true);
+                                            }
+                                        }}
+                                        className="w-full py-3 bg-gold text-obsidian text-xs uppercase tracking-ultra font-semibold">
+                                        Authenticate Session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <footer className="py-16 px-6 max-w-7xl mx-auto border-t border-gold/10 text-xs text-ecruMuted">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                            
+                            {/* Col 1 */}
+                            <div className="space-y-3">
+                                <div className="font-serif text-xl text-ecru">SOMAH ÉDU</div>
+                                <p className="text-[11px] font-light leading-relaxed">
+                                    Somah EduSolutions Pvt. Ltd.<br />
+                                    EduAbroad International Education Consultants<br />
+                                    Gurugram, Haryana, India.
+                                </p>
+                            </div>
+
+                            {/* Col 2 */}
+                            <div>
+                                <span className="text-[10px] uppercase tracking-widest text-gold block mb-3 font-medium">Headquarters</span>
+                                <p className="text-[11px] font-light leading-relaxed">
+                                    Level 14, DLF Cyber City, Phase III<br />
+                                    Gurugram, Haryana 122002<br />
+                                    India
+                                </p>
+                            </div>
+
+                            {/* Col 3 */}
+                            <div>
+                                <span className="text-[10px] uppercase tracking-widest text-gold block mb-3 font-medium">Confidential Enquiries</span>
+                                <p className="text-[11px] font-light leading-relaxed">
+                                    Direct: +91 (0) 124 480 0000<br />
+                                    Vault: concierge@somahedu.com<br />
+                                    Monogram: SÉ-PRIVATE-NET
+                                </p>
+                            </div>
+
+                            {/* Col 4 */}
+                            <div>
+                                <span className="text-[10px] uppercase tracking-widest text-gold block mb-3 font-medium">Security & Compliance</span>
+                                <p className="text-[11px] font-light leading-relaxed">
+                                    All candidate records encrypted under 256-bit NDA compliance standards. Limited 30-candidate allocation active.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="pt-8 border-t border-gold/10 flex flex-col sm:flex-row items-center justify-between text-[10px] tracking-widest">
+                            <div>© 2026 SOMAH EDUSOLUTIONS PVT. LTD. ALL RIGHTS RESERVED.</div>
+                            <div className="mt-4 sm:mt-0 flex space-x-6">
+                                <a href="#" onClick={(e) => { e.preventDefault(); showToast("Encrypted NDA Disclaimers loaded."); }} className="hover:text-gold">PRIVACY DISCLOSURE</a>
+                                <a href="#" onClick={(e) => { e.preventDefault(); showToast("Institutional Ethics code loaded."); }} className="hover:text-gold">ETHICS CODE</a>
+                                <a href="#" onClick={(e) => { e.preventDefault(); setIsPortalOpen(true); }} className="hover:text-gold text-gold">CLIENT VAULT</a>
+                            </div>
+                        </div>
+                    </footer>
+
+                </div>
+            );
+        }
+
+        // Render application
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
